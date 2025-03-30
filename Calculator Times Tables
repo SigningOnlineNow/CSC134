@@ -1,0 +1,81 @@
+// 30 March 2025
+// Alesana E. Alesana
+// Times-Table Transformer
+
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+
+using namespace std;
+using namespace chrono;
+
+char getRandomOperator() {
+    char ops[] = {'+', '-', '*', '/'};
+    return ops[rand() % 4];
+}
+
+int generateNumber(int difficulty) {
+    if (difficulty == 1) return rand() % 10 + 1;
+    if (difficulty == 2) return rand() % 50 + 10;
+    return rand() % 100 + 50;
+}
+
+int main() {
+    srand(time(0));
+    int score = 0;
+    int rounds = 5;
+    int difficulty = 1;
+
+    cout << "🧠 Welcome to the Math Speed Trainer!\n";
+    cout << "Choose difficulty (1 = Easy, 2 = Medium, 3 = Hard): ";
+    cin >> difficulty;
+    cout << "\nGet ready! You have to answer " << rounds << " questions.\n\n";
+
+    for (int i = 1; i <= rounds; ++i) {
+        int a = generateNumber(difficulty);
+        int b = generateNumber(difficulty);
+        char op = getRandomOperator();
+        int correctAnswer;
+
+        if (op == '/' && b != 0) {
+            a = a * b; // ensure clean division
+        }
+
+        switch(op) {
+            case '+': correctAnswer = a + b; break;
+            case '-': correctAnswer = a - b; break;
+            case '*': correctAnswer = a * b; break;
+            case '/': correctAnswer = a / b; break;
+        }
+
+        cout << "Q" << i << ": What is " << a << " " << op << " " << b << "? ";
+
+        auto start = steady_clock::now();
+        int userAnswer;
+        cin >> userAnswer;
+        auto end = steady_clock::now();
+
+        double timeTaken = duration_cast<duration<double>>(end - start).count();
+
+        if (userAnswer == correctAnswer) {
+            cout << "✅ Correct! ";
+            score += 10;
+            if (timeTaken < 3.0) {
+                cout << "⚡ Speed bonus!\n";
+                score += 5;
+            } else {
+                cout << "\n";
+            }
+        } else {
+            cout << "❌ Oops! Correct answer was " << correctAnswer << ".\n";
+        }
+
+        cout << "⏱️ Time taken: " << timeTaken << " seconds\n\n";
+    }
+
+    cout << "🎯 Your final score: " << score << " out of " << rounds * 15 << "\n";
+    cout << "Thanks for playing!\n";
+
+    return 0;
+}
